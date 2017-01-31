@@ -13,14 +13,15 @@
 		<div id="search_form_div">
 			<form method="post" action="<?= $_SERVER['PHP_SELF'] ?>" onsubmit="return false" id="search_form">
 				<input type="text" name="search" id="search_input" />
-				<button type="submit" class="action">Search</button>
+				<button type="submit" onclick="searchWine()" class="action">Search</button>
 			</form>
 		</div>
 		<div style="clear:both"></div>
 		<div id="wine_list_div_container"  class="main_element">
 			<div id="wine_list_div" class="main_element">
+				<p id="message"></p>
 				<ul id="wine_list">
-
+					
 				</ul>
 			</div>
 		</div>
@@ -33,21 +34,19 @@
 				<p><label for="country">Country: </label><br /><input type="text" name="country" id="country" /></p>
 				<p><label for="region">Region: </label><br /><input type="text" name="region" id="region" /></p>
 				<p><label for="year">Year: </label><br /><input type="number" name="year" id="year" /></p>
-				<div id="wine_note_div">
-					<label>Notes: </label>
-					<br/>
-						<textarea cols="9" name="notes"> 
-						</textarea>
-				</div>
-			</form>
-			<button onclick="saveWine(document.forms[1])" class="action">Save</button>
-			<button onclick="deleteWine(document.forms[1])" class="action">Delete</button>
+			
+			<button onclick="saveWine(document.forms[1])" class="action" name="btSave" >Save</button>
+			<button onclick="deleteWine(document.forms[1].id)" class="action" name="btDelete">Delete</button>
 			<button onclick="clearFrm()" class="action">New wine</button>
+			</form>
 		</div>
 		<div id="wine_review"  class="main_element">
 			<!-- La fonction getWine() récupérera dynmiquement les données, contenu suivant simulé.-->
-			<img src="http://www.punch-et-cocktail.com/media/catalog/product/cache/7/image/400x/9df78eab33525d08d6e5fb8d27136e95/i/m/image_4063.jpg" alt="le nom du vin"  id="wine_review_img" />
-
+			<img src="pictures/image_0.jpg" alt="Le nom du vin" id="wine_review_img" />
+			<div id="wine_note_div">
+				<label for="description">Notes: </label><br/>
+				<textarea cols="9" name="notes" id="notes"> </textarea>
+			</div>
 		</div>
 	</section>
 </body>
