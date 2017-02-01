@@ -21,8 +21,6 @@
 		
 		var type = (id)? 'PUT' : 'POST';
 
-		var str = (id)? "modifié" : "ajouté"; 
-
 		$.ajax({
 			url: "ressources/trait.php", 
 			type: type, 
