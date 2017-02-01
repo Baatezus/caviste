@@ -17,7 +17,7 @@
 
 	function saveWine(frm) {
 
-		var id = (frm.id.value == '') ? false : true;
+		var id = frm.id.value > 0;
 		
 		var type = (id)? 'PUT' : 'POST';
 
