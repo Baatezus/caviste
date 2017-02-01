@@ -29,11 +29,11 @@
 			data: $(frm).serialize()
 		}).done(function() {
 
-			displayMessage( (id)?'update' : 'add', true)
+			displayMessage( (id)? 'update' : 'add', true)
 		})
 		.fail( function() {
 			
-			displayMessage( (id)?'update' : 'add', false)
+			displayMessage( (id)? 'update' : 'add', false)
 
 		});
 
@@ -194,7 +194,7 @@
 
 		action = tabActionFr[tabAction.indexOf(action)];
 
-		var message = (success) ? "Le vin a été " + action + "." : "Le vin n'a pu être" + action + "!";	
+		var message = (success)? "Le vin a été " + action + "." : "Le vin n'a pu être" + action + "!";	
 
 		$('#message').text(message); clearFrm();
 
