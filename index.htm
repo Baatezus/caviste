@@ -3,52 +3,89 @@
 <head>
 	<title>Cellier</title>
 	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" type="text/css" href="styles/index.css" />
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<script src="scripts/index.js"></script>
 </head>
+
 <body onload="getAllWines()">
-	<section id="main_content">
-	<h1>Mon cellier: </h1>
+	<section id="main_content" class="container clearfix">
+		<h1>Mon cellier</h1>
+		
+		<!-- Formulaire de recherche -->
 		<div id="search_form_div">
-			<form method="post" action="<?= $_SERVER['PHP_SELF'] ?>" onsubmit="return false" id="search_form">
-				<input type="text" name="search" id="search_input" />
-				<button type="submit" class="action">Search</button>
+			<form method="post" action="<?= $_SERVER['PHP_SELF'] ?>" onsubmit="return serchByTag(this)" id="search_form" class="form-inline">
+				<div class="input-group">
+					<input class="form-control" type="text" name="search" id="search_input" placeholder="Search by tag"/>
+					<div class="input-group-btn">
+					  <button class="btn btn-default btn-md" type="submit" size="10px">
+						<i class="fa fa-search" ></i>
+					  </button>
+					</div>
+				</div>
 			</form>
 		</div>
+		
+		<!-- Bloc de notifications -->
 		<div style="clear:both"></div>
 		<div id="message"></div>
-		<div id="wine_list_div_container"  class="main_element">
+		
+		<!-- La liste des vins -->
+		<div id="wine_list_div_container" class="main_element">
 			<div id="wine_list_div" class="main_element">
-				<ul id="wine_list">
+				<ul id="wine_list" class="list-group">
 
 				</ul>
 			</div>
 		</div>
-		<p id="notification"></p>
-		<div id="edit_wine_form_div"  class="main_element">
-			<form method="post" action="#"  id="edit_wine_form" enctype='multipart/form-data' onsubmit="return saveWine(document.forms[1])">
+		
+		<!-- Formulaire de traitement de données -->
+		<div id="edit_wine_form_div" class="main_element">
+			<form method="post" id="edit_wine_form" enctype='multipart/form-data' onsubmit="return check(this)//saveWine(document.forms[1])">
 				<!-- La fonction getWine() récupérera dynmiquement les données, contenu suivant simulé.-->
-				<p><label for="id">Id: </label><br /><input type="number" name="id" id="id"  /></p>
-				<p><label for="name">Name: </label><br /><input type="text" name="name" id="name" /></p>
-				<p><label for="grapes">Grapes: </label><br /><input type="text" name="grapes" id="grapes" /></p>
-				<p><label for="country">Country: </label><br /><input type="text" name="country" id="country" /></p>
-				<p><label for="region">Region: </label><br /><input type="text" name="region" id="region" /></p>
-				<p><label for="year">Year: </label><br /><input type="number" name="year" id="year" /></p>
-				<div>
-					<label>Notes: </label>
-					<br/>
-					<textarea cols="9" name="description" id="description"></textarea>
+				<div class="form-group">
+					<label for="id">Id: </label><br />
+					<input class="form-control disabled" type="number" name="id" id="id" />
 				</div>
-				<button class="action" type="submit">Save</button>
-				<button onclick="deleteWine(document.forms[1])" class="action">Delete</button>
-				<button onclick="clearFrm()" class="action">New wine</button>
+				<div class="form-group">
+					<label for="name">Name: </label><br />
+					<input class="form-control" type="text" name="name" id="name" required />
+				</div>
+				<div class="form-group">
+					<label for="grapes">Grapes: </label><br />
+					<input class="form-control" type="text" name="grapes" id="grapes" required />
+				</div>
+				<div class="form-group">
+					<label for="country">Country: </label><br />	
+					<input class="form-control" type="text" name="country" id="country" required />
+				</div>
+				<div class="form-group">
+					<label for="region">Region: </label><br />
+					<input class="form-control" type="text" name="region" id="region" required />
+				</div>
+				<div class="form-group">
+					<label for="year">Year: </label><br />
+					<input class="form-control" type="number" name="year" id="year" required />
+				</div>
+				
+				<div id="wine_note_div" class="form-group">
+					<label for="description">Notes: </label><br/>
+					<textarea cols="9" name="description" id="description" class="form-control" required ></textarea>
+				</div>
+				
+				<button class="btn-default" type="submit">Save wine</button>
+				<button onclick="clearFrm()" class="btn-default">New wine</button>
 			</form>
+			
+			<button onclick="" class="btn-default" id="deleteBtn">Delete wine</button>
 		</div>
-		<div id="wine_review"  class="main_element">
-			<!-- La fonction getWine() récupérera dynmiquement les données, contenu suivant simulé.-->
-			<img src="http://www.punch-et-cocktail.com/media/catalog/product/cache/7/image/400x/9df78eab33525d08d6e5fb8d27136e95/i/m/image_4063.jpg" alt="le nom du vin"  id="wine_review_img" />
-
+		
+		<div id="wine_review" class="main_element">
+			<img src="pictures/image_0.jpg" alt="le nom du vin" id="wine_review_img" />
 		</div>
 	</section>
 </body>
