@@ -132,8 +132,6 @@ function getWine(id) {
 		var wine = JSON.parse(data);
 
 		displayWine(wine);
-
-		makeSelected(id);
 	});
 }
 
@@ -144,8 +142,9 @@ function getWine(id) {
 * Affiche une liste de vins reçue en paramètre.
 */
 function displayWines(tabWines) {
-	$('.active').removeClass('active');
 	var $wine_list = $('#wine_list');
+	
+	$('.active').removeClass('active');
 	
 	$('.wine_list_element').remove();
 
@@ -185,8 +184,11 @@ function displayWine(wine) {
 * Vide le formulaire.
 */
 function clearFrm() {
-	$('input').val('');
-	$('textarea').val('');	
+	$('.active').removeClass('active'); // Déselectionner la liste des vins
+	
+	$('.form-group .form-control').removeAttr('required'); // On retire "required" des champs qu'on veut vider
+	$('.form-group .form-control').val('');
+		
 	$('#wine_review_img').attr('src', 'pictures/image_0.jpg'); // On met une image par défault
 }
 
