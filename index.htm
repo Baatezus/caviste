@@ -18,13 +18,13 @@
 		
 		<!-- Formulaire de recherche -->
 		<div id="search_form_div">
-			<form method="post" action="<?= $_SERVER['PHP_SELF'] ?>" onsubmit="return serchByTag(this)" id="search_form" class="form-inline">
+			<form method="post" action="<?= $_SERVER['PHP_SELF'] ?>" onsubmit="return searchByTag(this)" id="search_form" class="form-inline">
 				<div class="input-group">
 					<input class="form-control" type="text" name="search" id="search_input" placeholder="Search by tag"/>
 					<div class="input-group-btn">
-					  <button class="btn btn-default btn-md" type="submit" size="10px">
-						<i class="fa fa-search" ></i>
-					  </button>
+					 <button type="button" class="btn btn-default">
+						<span class="glyphicon glyphicon-search"></span> Search
+					</button>
 					</div>
 				</div>
 			</form>
@@ -45,7 +45,7 @@
 		
 		<!-- Formulaire de traitement de données -->
 		<div id="edit_wine_form_div" class="main_element">
-			<form method="post" id="edit_wine_form" enctype='multipart/form-data' onsubmit="return check(this)//saveWine(document.forms[1])">
+			<form method="post" id="edit_wine_form" enctype='multipart/form-data' onsubmit="return check(this)">
 				<!-- La fonction getWine() récupérera dynmiquement les données, contenu suivant simulé.-->
 				<div class="form-group">
 					<label for="id">Id: </label><br />
@@ -78,7 +78,7 @@
 				</div>
 				
 				<button class="btn-default" type="submit">Save wine</button>
-				<button onclick="clearFrm()" class="btn-default">New wine</button>
+				<button type="reset" class="btn-default">New wine</button>
 			</form>
 			
 			<button onclick="" class="btn-default" id="deleteBtn">Delete wine</button>

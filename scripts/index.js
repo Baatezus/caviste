@@ -1,142 +1,246 @@
-	// Encapsulation jQuery
-	$(function(){
+// DECLARATION DES CONSTANTES
+const POST_URL = "/api/wines";
+const DELETE_URL = "/api/wines/id";
+const GET_ALL_URL = "/api/wines";
+const GET_ONE_URL = "/api/wines/id";
+const SEARCH_BY_TAG = "/api/wines/search/tag";
+const PUT_URL = "/api/wines/id";
+
+// ENCAPSULATION JQUERY
+$(function() {
+
+});
+
+// VALIDATION DU FORMULAIRE
+/**
+* @param un formulaire
+* @return bool | function
+* Vérifie que tous les champs nécessaires sont bien complétés
+*/
+function check(frm) {
+	var checked = $('#description').val().length > 0;
+	var checkYear = $('#year').val() > 1925 && $('#year').val() < 2017;
+	var $inputs = $('input');
+	
+	for (var i = 2; i < $inputs.length && checked; i++) {
+		checked = $inputs.eq(i).val().length > 0;
+		
+	}
+	
+	if(!checked) {
+		$('#message').text('Tout les champs doivent être complétés !');
+		return false;
+	} else if(!checkYear) {
+		$('#message').text('Année non valide !');
+		return false;
+	}
+			
+	return (saveWine(frm));	
+}
+
+// TRAITEMENT DES DONNEES
+/**
+* @param un formulaire 
+* @return bool
+* Sauvegarde un nouveau vin ou met à jour un vin existant.
+*/
+function saveWine(frm) {
+	var id = frm.id.value;
+	var type = (id)? 'PUT' : 'POST';
+	var url = (!id)? POST_URL : PUT_URL.substr(0,11)+id;
+	console.log(url);
+	$.ajax({
+		url: url, 
+		type: type, 
+		data: $(frm).serialize()
+	}).done(function() {
+
+		displayMessage( (id)? 'update' : 'add', true);
+
+		getAllWines();
+
+	})
+	.fail(function() {
+		
+		displayMessage( (id)? 'update' : 'add', false);
 
 	});
-// VALIDIION FORMAULAIRE
 
-	function check(frm) {
-		return false;
-	}
+	return false;
+}
+ 
+/**
+* @param un formulaire 
+* @return bool
+* Efface un vin.
+*/   
+function deleteWine(id) {
+	var url = DELETE_URL.substr(0,11);
+	
+	$.ajax({
+		url: url + id, 
+		type: "DELETE", 
+	}).done( function() {
 
-//TRAITEMENT DES DONNEES
+		displayMessage("delete", true);
 
-	function saveWine(frm) {
+		getAllWines();
 
-		var id = (frm.id.value == '') ? false : true;
+	})
+	.fail( function() {
+
+		displayMessage("delete", false);
 		
-		var type = (!id)? 'POST' : 'PUT';
+	});
 
-		var str = (id)? "modifié" : "ajouté"; 
-
-		$.ajax({
-			url: "ressources/trait.php", 
-			type: type, 
-			data: $(frm).serialize()
-		}).done(function() {
-			// On affiche un message de réussite à l'utilisateur
-			$('#message').text('Vin ' + str + ' avec succès.');
-
-			// Réafficher la liste des vins après la modification de la base de données 
-			getAllWines();
-			
-			// Vider les champs du formulaire
-			clearFrm();
-		})
-		.fail( function() {
-			
-			$('#message').text('Le vin n\'a pu être ' + str + '!');
-			
-		});
-
-		return false;
-	}
-       
-
-	function deleteWine(id) {
-		$.ajax({
-			url: "ressources/delete.php", 
-			type: "DELETE", 
-			data: "id="+id
-		}).done( function(data) {
-			// On affiche un message de réussite à l'utilisateur
-			$('#message').text('Vin supprimé avec succès.');
-			
-
-			// Réafficher la liste des vins après la modification de la base de données 
-			getAllWines();
-			
-			// Vider les champs du formulaire
-			clearFrm();
-		})
-		.fail( function() {
-			$('#message').text('Le vin n\'a pu être suprimé');
-		});
-
-		return false;	
-	}
+	return false;	
+}
 
 // RECUPERATION DES DONNEES
+/**
+* @param void
+* @return void
+* Récupère la liste complète des vins.
+*/
+function getAllWines() {
+	$.get(GET_ALL_URL, function(data) {
+		var tabWines = JSON.parse(data);
 
-	function serchByTag(tag) {
-		$.get("ressources/wines.php", {"tag": tag}, function(data){
-		  	var tabWines = JSON.parse(data);
+		displayWines(tabWines);
+	});
+}
 
-		  	displayWines(tabWines);
-		});		
-	}
+/**
+* @param string
+* @return void
+* Récupère une liste de vins selon un terme envoyé en paramètre.
+*/
+function searchByTag(frm) {
+	var tag = frm.search.value;
+	var url = SEARCH_BY_TAG.substr(0,18);
+	
+	$.get(url+tag, function(data) {
+		var tabWines = JSON.parse(data);
 
-	function getAllWines() {
-		$.get("ressources/wines.php", function(data){
-		  	var tabWines = JSON.parse(data);
+		displayWines(tabWines);
+	});		
+	return false;
+}
 
-		  	displayWines(tabWines);
-		});
-	}
+/**
+* @param int
+* @return void
+* Récupère un vin correspondant à l'id passé en paramètre.
+*/
+function getWine(id) {
+	var url = GET_ONE_URL.substr(0,11);
+	
+	makeSelected(id);
+	
+	$.get( url+id, function(data) {
+		var wine = JSON.parse(data);
 
-	function getWine(id) {
+		displayWine(wine);
+
 		makeSelected(id);
-
-		$.get("ressources/onewine.php", {"id": id}, function(data){
-		  	var wine = JSON.parse(data);
-
-		  	displayWine(wine);
-		});
-	}
+	});
+}
 
 // AFFICHAGE DES DONNEES ET GESTION D'AFFICHAGE
+/**
+* @param array[json]
+* @return void
+* Affiche une liste de vins reçue en paramètre.
+*/
+function displayWines(tabWines) {
+	$('.active').removeClass('active');
+	var $wine_list = $('#wine_list');
+	
+	$('.wine_list_element').remove();
 
-	function displayWines(tabWines){
-			$('.wine_list_element').remove();
+	for (var i = 0; i < tabWines.length; i++) {
+		
+		var li = $('<li></li>');
 
-		  	var $wine_list = $('#wine_list');
+		$(li).attr('class', 'list-group-item');
 
-		  	for (var i = 0; i < tabWines.length; i++) {
-		  		
-		  		var li = $('<li></li>');
+		$(li).attr('id', 'wine' + tabWines[i].id);
 
-		  		$(li).attr('class', 'wine_list_element');
+		$(li).attr('onclick', 'getWine(' + tabWines[i].id + ')');
 
-		  		$(li).attr('id', 'wine' + tabWines[i].id);
+		$(li).text(tabWines[i].name);
 
-		  		$(li).attr('onclick', 'getWine(' + tabWines[i].id + ')');
+		$wine_list.append(li);
+	}
+}
 
-		  		$(li).text(tabWines[i].name)
-
-		  		$wine_list.append(li);
-		  	}
+/**
+* @param object
+* @return void
+* Affiche le vin passé en paramètre.
+*/
+function displayWine(wine) {
+	for (prop in wine) {
+		$('#' + prop).val(wine[prop]);
 	}
 
-	function displayWine(wine){
-		for (prop in wine) {
-	  		$('#' + prop).val(wine[prop]);
-		}
+	$('#description').text(wine.description);
+	$('#wine_review_img').attr('src','pictures/'+wine.img_url);
+}
 
-		($('#description')).text(wine.description);
+/**
+* @param void
+* @return void
+* Vide le formulaire.
+*/
+function clearFrm() {
+	$('.active').removeClass('active'); // Déselectionner la liste des vins
+	
+	$('.form-group .form-control').text('');
+		
+	$('#wine_review_img').attr('src', 'pictures/image_0.jpg'); // On met une image par défault
+}
+
+/**
+* @param int
+* @return void
+* Attribue la classe "active" à l'élément passé en paramètre, 
+* et retire la même classe à tout les autres.
+*/
+function makeSelected(id) {
+	$('.active').removeClass('active');
+	$('#wine' + id).addClass('active');
+	$('#deleteBtn').attr('onclick', 'deleteWine(' + id + ')');
+}
+
+/**
+* @param string, boolean
+* @return void
+* Affiche une notification selon l'action effectuée.
+*/ 
+function displayMessage(action, success) {
+	var tabAction = [
+		"add",
+		"update",
+		"delete"
+	];
+
+	var tabActionFr = [
+		"ajouté",
+		"modifié",
+		"effacé"
+	];
+
+	if(tabAction.indexOf(action) < 0) {
+		return false;
 	}
+	
+	action = tabActionFr[tabAction.indexOf(action)];
 
-	function clearFrm() {
-		$('input').val('');
-		$('textarea').val('');	
-		$('#wine_review_img').attr('src', 'pictures/image_0.jpg');	// Vide le formulaire pour introduire un nouveau vin.
-	}
+	var message = (success)? "Le vin a été " + action + "." : "Le vin n'a pas pu être " + action + ".";	
 
-	function makeSelected(id) {
-		$('.wine_list_element').removeClass('selected');
-		$('#wine' + id).addClass('selected');
-	}
+	$('#message').text(message);
+	
+	clearFrm();
 
-
-//Exagération.... Ne pas faire
-	function displayMessage(id, sucess) {
-
-	}
+}
