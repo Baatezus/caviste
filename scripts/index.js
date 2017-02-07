@@ -1,14 +1,13 @@
 // DECLARATION DES CONSTANTES
 const POST_URL = "/api/wines";
 const DELETE_URL = "/api/wines/id";
-const GET_ALL_URL = "/api/wines";
+const GET_ALL_URL = "ressources/wines.php";//"/api/wines";
 const GET_ONE_URL = "/api/wines/id";
 const SEARCH_BY_TAG = "/api/wines/search/tag";
 const PUT_URL = "/api/wines/id";
 
 // ENCAPSULATION JQUERY
 $(function() {
-
 });
 
 // VALIDATION DU FORMULAIRE
@@ -48,7 +47,7 @@ function saveWine(frm) {
 	var id = frm.id.value;
 	var type = (id)? 'PUT' : 'POST';
 	var url = (!id)? POST_URL : PUT_URL.substr(0,11)+id;
-	console.log(url);
+	//console.log(url);
 	$.ajax({
 		url: url, 
 		type: type, 
@@ -105,7 +104,6 @@ function deleteWine(id) {
 function getAllWines() {
 	$.get(GET_ALL_URL, function(data) {
 		var tabWines = JSON.parse(data);
-
 		displayWines(tabWines);
 	});
 }
@@ -211,6 +209,11 @@ function makeSelected(id) {
 	$('.active').removeClass('active');
 	$('#wine' + id).addClass('active');
 	$('#deleteBtn').attr('onclick', 'deleteWine(' + id + ')');
+        
+        if(window.innerHeight <= 640){
+            $("li:not(.active)").fadeOut('slow');
+            $("#listeVins").show();
+        }
 }
 
 /**
@@ -238,9 +241,16 @@ function displayMessage(action, success) {
 	action = tabActionFr[tabAction.indexOf(action)];
 
 	var message = (success)? "Le vin a été " + action + "." : "Le vin n'a pas pu être " + action + ".";	
+	var attr = (success)? "row alert alert-success col-sm-12 text-center" : "row alert alert-danger col-sm-12 text-center";	
 
 	$('#message').text(message);
+	$('#message').attr('class',attr);
+        
 	
 	clearFrm();
 
+}
+
+function listeVins (){
+    $('li:not(.active)').show();
 }
