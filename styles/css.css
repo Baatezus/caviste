@@ -1,0 +1,62 @@
+/* 
+    Created on : 5 févr. 2017, 02:23:42
+    Author     : mikialey
+*/
+
+#btn-delete{
+    position: relative;
+    top: -26px;
+    left: 165px;
+}
+#wine_note_div{
+    position: relative;
+    top: -150px;
+    left: 110%;
+}
+#message{
+    height: auto;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+.vins{
+    height: 580px;
+    overflow: scroll;
+}
+
+#listeVins{
+    display: none;
+}
+@media only screen and (max-width: 769px) {
+    #wine_note_div{
+        position: initial;
+    }
+    
+    #img-wine{
+        position: absolute;
+        top: 20%;
+        left: 60%;
+        z-index: -1;
+    }
+    .vins{
+        height: 100%;
+        overflow: no-display;
+    }
+}
+
+@media only screen and (max-width: 640px) {
+    #img-wine{
+        position: absolute;
+        top: 50%;
+        left: 80%;
+        z-index: -1;
+    }
+}
+@media only screen and (max-width: 361px) {
+    #img-wine{
+        position: absolute;
+        top: 40%;
+        left: 40%;
+        z-index: -1;
+    }
+}
